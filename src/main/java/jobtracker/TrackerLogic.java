@@ -61,6 +61,7 @@ public class TrackerLogic {
 
     public void deleteJob() {
         String sql = "DELETE FROM jobs WHERE id = ?";
+        System.out.println("\n=== Job Delete Menu ===");
         System.out.println("\nEnter the Job ID to delete:");
 
         Scanner input = new Scanner(System.in);
@@ -93,6 +94,7 @@ public class TrackerLogic {
     }
 
     public void updateJob() {
+        System.out.println("\n=== Job Update Menu ===");
         System.out.println("\nSelect a job ID to update: ");
 
         Scanner input = new Scanner(System.in);
@@ -287,35 +289,50 @@ public class TrackerLogic {
     }
 
     public void findJob() {
-        System.out.println("\nSearch a job by: ");
-        System.out.println("1. Company Name");
-        System.out.println("2. Job Title");
-
         Scanner input = new Scanner(System.in);
         int choice;
 
-        choice = input.nextInt();
-        switch (choice) {
-            case 1 -> jobByCompanyName();
-            case 2 -> jobByJobTitle();
-        }
-        goHome();
+        do {
+            System.out.println("\n=== Job Search Menu ===");
+            System.out.println("1. Search by Company Name");
+            System.out.println("2. Search by Job Title");
+            System.out.println("3. Exit");
+
+            while (!input.hasNextInt()) {
+                System.err.println("Invalid input. Please enter a number.");
+                input.next();
+                findJob();
+            }
+            choice = input.nextInt();
+            input.nextLine();
+
+            switch (choice) {
+                case 1 -> jobByCompanyName();
+                case 2 -> jobByJobTitle();
+                case 3 -> {
+                    mainMenu();
+                }
+                default -> System.err.println("Invalid choice.");
+            }
+
+        } while (true);
+
     }
 
     public void jobByCompanyName() {
-        String sql = "SELECT * from jobs WHERE LOWER(company) = LOWER(?)";
+        String sql = "SELECT * from jobs WHERE LOWER(company) LIKE LOWER(?)";
         Scanner input = new Scanner(System.in);
 
 
         System.out.println("\nEnter Company Name: ");
-        String name = input.nextLine();
+        String name = input.nextLine().trim();
 
 
         try (Connection conn = DriverManager.getConnection(DATABASE_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             // bind scanner input to the prepared statement
-            pstmt.setString(1, name);
+            pstmt.setString(1, "%"+ name + "%");
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 boolean found = false;
@@ -358,20 +375,20 @@ public class TrackerLogic {
     }
 
     public void jobByJobTitle() {
-        String sql = "SELECT * from jobs WHERE LOWER(title) = LOWER(?)";
+        String sql = "SELECT * from jobs WHERE LOWER(title) LIKE LOWER(?)";
 
         Scanner input = new Scanner(System.in);
 
 
-        System.out.println("\nEnter Job Title: ");
-        String jobTitle = input.nextLine();
+        System.out.println("\nEnter Job Title Keyword: ");
+        String jobTitle = input.nextLine().trim();
 
 
         try (Connection conn = DriverManager.getConnection(DATABASE_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             // bind scanner input to the prepared statement
-            pstmt.setString(1, jobTitle);
+            pstmt.setString(1, "%"+ jobTitle + "%"); // % Allows to check for characters in between this for better finding
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 System.out.println("\n======== Jobs By Job Title ========");
@@ -421,6 +438,7 @@ public class TrackerLogic {
         String sql = "INSERT INTO jobs (company, title, status, date) VALUES (?, ?, ?, ?)";
         String sqlWithNotes = "INSERT INTO jobs (company, title, status, date, notes) VALUES (?, ?, ?, ?, ?)";
 
+        System.out.println("\n=== New Job Add ===");
         System.out.println("Company name: ");
         company = input.nextLine();
 
@@ -438,6 +456,7 @@ public class TrackerLogic {
         System.out.println("1. Yes");
         System.out.println("2. No");
         choice = input.nextInt();
+        input.nextLine();
 
         if (choice == 1) {
             System.out.println("Enter notes:");
