@@ -57,6 +57,7 @@ public class TrackerLogic {
 
     public void logout() {
         System.out.println("Logged Out...");
+        System.exit(0);
     }
 
     public void deleteJob() {

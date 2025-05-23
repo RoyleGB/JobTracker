@@ -1,17 +1,34 @@
 package jobtracker;
 
+import jakarta.persistence.*;
+
 import java.util.Date;
 
+@Entity
+@Table(name = "jobs") // Tells hibernate which table to use
 public class Job {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(name = "company")
     private String company;
+
+    @Column(name = "title")
     private String jobTitle;
+
+    @Column(name = "status")
     private String status;
-    private Date dateApplied;
+
+    @Column(name = "date")
+    private String dateApplied;
+
+    @Column(name = "notes")
     private String notes;
 
     // Main Constructor
-    public Job(int id, String company, String jobTitle, String status, Date dateApplied) {
+    public Job(int id, String company, String jobTitle, String status, String dateApplied) {
         this.id = id;
         this.company = company;
         this.jobTitle = jobTitle;
@@ -20,13 +37,17 @@ public class Job {
     }
 
     // Constructor with Notes
-    public Job(int id, String company, String jobTitle, String status, Date dateApplied, String notes) {
+    public Job(int id, String company, String jobTitle, String status, String dateApplied, String notes) {
         this.id = id;
         this.company = company;
         this.jobTitle = jobTitle;
         this.status = status;
         this.dateApplied = dateApplied;
         this.notes = notes;
+    }
+
+    public Job() {
+
     }
 
     // ID
@@ -66,11 +87,11 @@ public class Job {
     }
 
     // APPLIED DATE
-    public Date getDateApplied() {
+    public String getDateApplied() {
         return dateApplied;
     }
 
-    public void setDateApplied(Date dateApplied) {
+    public void setDateApplied(String dateApplied) {
         this.dateApplied = dateApplied;
     }
 
